@@ -19,7 +19,7 @@ export default function AuthLayout({ children }) {
 
         <main className="auth-main">{children}</main>
 
-        <footer className="auth-footer">Desenvolvido por Senac RS</footer>
+        <footer className="auth-footer">Desenvolvido por Gabriel Matos TesteFullStack</footer>
       </div>
 
       <a className="help-fab" href="/ajuda">? AJUDA</a>

@@ -15,7 +15,7 @@ public function run(): void
 {
 User::firstOrCreate(['email' => 'admin@admin.com'], [
 'name' => 'Admin',
-'cpf' => '00000000000',
+'cpf' => '0',
 'data_nascimento' => '2001-10-10',
 'password' => Hash::make('admin123'),
 'role' => User::ROLE_ADMIN,

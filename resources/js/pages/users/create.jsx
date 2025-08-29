@@ -26,128 +26,428 @@ export default function UsersCreate() {
   // Fallback CSRF direto do <meta>
   const csrf = document.querySelector('meta[name="csrf-token"]')?.content || "";
 
-  const submit = (e) => {
+  
+const submit = (e) => {
     e.preventDefault();
-    transform((curr) => ({ ...curr, cpf: unmask(curr.cpf), role: Number(curr.role) }));
-    post("/users", {
-      // envia _token junto (fallback, além do header do axios)
-      data: { _token: csrf },
-      onSuccess: () => reset(),
-      preserveScroll: true,
+
+    transform((curr) => ({
+        ...curr,
+        cpf: unmask(curr.cpf),
+        role: Number(curr.role),
+    }));
+
+    post('/users', {
+        onSuccess: () => reset(),
+        onError: (errors) => {
+            console.error("Erro de validação:", errors);
+        },
+        onFinish: () => {
+            console.log("Finalizado");
+        },
     });
-  };
+};
+
 
   return (
     <AuthLayout>
-      <div className="page-form">
-        <div className="form-header">
-          <Link href="/users" aria-label="Voltar para lista" className="icon-btn back-btn">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      {/* Container principal com largura maior */}
+      <div style={{
+        width: '100%',
+        maxWidth: '800px', // Largura maior para o formulário
+        margin: '0 auto',
+        padding: '2rem 1rem',
+        minHeight: '100vh'
+      }}>
+        {/* Header com botão voltar e título */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1.5rem',
+          marginBottom: '2rem'
+        }}>
+          <Link
+            href="/users"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '48px',
+              height: '48px',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              color: '#FFFFFF',
+              textDecoration: 'none',
+              transition: 'all 0.2s',
+              border: '2px solid rgba(255, 255, 255, 0.2)'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+              e.target.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </Link>
 
-          <div className="form-title">
-            <h1>Novo usuário</h1>
-            <p>Preencha os dados para criar um acesso.</p>
+          <div>
+            <h1 style={{
+              fontSize: '2.5rem',
+              fontWeight: 'bold',
+              color: '#FFFFFF',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              Novo usuário
+            </h1>
+            <p style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              margin: 0,
+              fontSize: '1.1rem'
+            }}>
+              Preencha os dados para criar um acesso.
+            </p>
           </div>
         </div>
 
-        <div className="card-form">
+        {/* Card do formulário */}
+        <div style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: '20px',
+          padding: '3rem',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)'
+        }}>
           <form onSubmit={submit}>
-            <div className="field">
-              <label>name</label>
+            {/* Nome */}
+            <div style={{ marginBottom: '2rem' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '0.75rem',
+                fontWeight: '600',
+                color: '#333',
+                fontSize: '1rem'
+              }}>
+                Nome completo
+              </label>
               <input
-                className="input input--lg"
+                style={{
+                  width: '100%',
+                  padding: '16px 20px',
+                  border: '2px solid #E0E0E0',
+                  borderRadius: '12px',
+                  fontSize: '1rem',
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  backgroundColor: '#FAFAFA'
+                }}
                 value={data.name}
                 onChange={(e) => setData("name", e.target.value)}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#F9A825';
+                  e.target.style.backgroundColor = '#FFFFFF';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#E0E0E0';
+                  e.target.style.backgroundColor = '#FAFAFA';
+                }}
                 required
               />
-              {errors.name && <small className="error">{errors.name}</small>}
+              {errors.name && <small style={{ color: '#F44336', fontSize: '0.875rem', marginTop: '0.5rem', display: 'block' }}>{errors.name}</small>}
             </div>
 
-            <div className="field">
-              <label>CPF</label>
-              <input
-                className="input input--lg"
-                inputMode="numeric"
-                value={data.cpf}
-                onChange={(e) => setData("cpf", maskCpf(e.target.value))}
-                placeholder="000.000.000-00"
-                required
-              />
-              {errors.cpf && <small className="error">{errors.cpf}</small>}
-            </div>
-
-            <div className="field">
-              <label>E-mail</label>
-              <input
-                className="input input--lg"
-                type="email"
-                value={data.email}
-                onChange={(e) => setData("email", e.target.value)}
-                required
-              />
-              {errors.email && <small className="error">{errors.email}</small>}
-            </div>
-
-            <div className="field two-cols">
+            {/* Grid para CPF e E-mail */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '2rem',
+              marginBottom: '2rem'
+            }}>
+              {/* CPF */}
               <div>
-                <label>Data de nascimento</label>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.75rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  fontSize: '1rem'
+                }}>
+                  CPF
+                </label>
                 <input
-                  className="input input--lg"
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: '2px solid #E0E0E0',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    backgroundColor: '#FAFAFA'
+                  }}
+                  inputMode="numeric"
+                  value={data.cpf}
+                  onChange={(e) => setData("cpf", maskCpf(e.target.value))}
+                  placeholder="000.000.000-00"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F9A825';
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#E0E0E0';
+                    e.target.style.backgroundColor = '#FAFAFA';
+                  }}
+                  required
+                />
+                {errors.cpf && <small style={{ color: '#F44336', fontSize: '0.875rem', marginTop: '0.5rem', display: 'block' }}>{errors.cpf}</small>}
+              </div>
+
+              {/* E-mail */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.75rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  fontSize: '1rem'
+                }}>
+                  E-mail
+                </label>
+                <input
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: '2px solid #E0E0E0',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    backgroundColor: '#FAFAFA'
+                  }}
+                  type="email"
+                  value={data.email}
+                  onChange={(e) => setData("email", e.target.value)}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F9A825';
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#E0E0E0';
+                    e.target.style.backgroundColor = '#FAFAFA';
+                  }}
+                  required
+                />
+                {errors.email && <small style={{ color: '#F44336', fontSize: '0.875rem', marginTop: '0.5rem', display: 'block' }}>{errors.email}</small>}
+              </div>
+            </div>
+
+            {/* Grid para Data de nascimento e Nível de permissão */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '2rem',
+              marginBottom: '2rem'
+            }}>
+              {/* Data de nascimento */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.75rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  fontSize: '1rem'
+                }}>
+                  Data de nascimento
+                </label>
+                <input
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: '2px solid #E0E0E0',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    backgroundColor: '#FAFAFA'
+                  }}
                   type="date"
                   value={data.data_nascimento}
                   onChange={(e) => setData("data_nascimento", e.target.value)}
-                  required
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F9A825';
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#E0E0E0';
+                    e.target.style.backgroundColor = '#FAFAFA';
+                  }}
                 />
                 {errors.data_nascimento && (
-                  <small className="error">{errors.data_nascimento}</small>
+                  <small style={{ color: '#F44336', fontSize: '0.875rem', marginTop: '0.5rem', display: 'block' }}>{errors.data_nascimento}</small>
                 )}
               </div>
 
+              {/* Nível de permissão */}
               <div>
-                <label>Nível de permissão</label>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.75rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  fontSize: '1rem'
+                }}>
+                  Nível de permissão
+                </label>
                 <select
-                  className="input input--lg"
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: '2px solid #E0E0E0',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    backgroundColor: '#FAFAFA',
+                    cursor: 'pointer'
+                  }}
                   value={data.role}
                   onChange={(e) => setData("role", Number(e.target.value))}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F9A825';
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#E0E0E0';
+                    e.target.style.backgroundColor = '#FAFAFA';
+                  }}
                 >
                   <option value={1}>Administrador</option>
                   <option value={2}>Moderador</option>
                   <option value={3}>Leitor</option>
                 </select>
-                {errors.role && <small className="error">{errors.role}</small>}
+                {errors.role && <small style={{ color: '#F44336', fontSize: '0.875rem', marginTop: '0.5rem', display: 'block' }}>{errors.role}</small>}
               </div>
             </div>
 
-            <div className="field">
-              <label>Senha</label>
-              <input
-                className="input input--lg"
-                type="password"
-                value={data.password}
-                onChange={(e) => setData("password", e.target.value)}
-                required
-              />
-              {errors.password && <small className="error">{errors.password}</small>}
+            {/* Grid para Senhas */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '2rem',
+              marginBottom: '3rem'
+            }}>
+              {/* Senha */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.75rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  fontSize: '1rem'
+                }}>
+                  Senha
+                </label>
+                <input
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: '2px solid #E0E0E0',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    backgroundColor: '#FAFAFA'
+                  }}
+                  type="password"
+                  value={data.password}
+                  onChange={(e) => setData("password", e.target.value)}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F9A825';
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#E0E0E0';
+                    e.target.style.backgroundColor = '#FAFAFA';
+                  }}
+                  required
+                />
+                {errors.password && <small style={{ color: '#F44336', fontSize: '0.875rem', marginTop: '0.5rem', display: 'block' }}>{errors.password}</small>}
+              </div>
+
+              {/* Confirmar senha */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.75rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  fontSize: '1rem'
+                }}>
+                  Confirmar senha
+                </label>
+                <input
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: '2px solid #E0E0E0',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    backgroundColor: '#FAFAFA'
+                  }}
+                  type="password"
+                  value={data.password_confirmation}
+                  onChange={(e) => setData("password_confirmation", e.target.value)}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F9A825';
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#E0E0E0';
+                    e.target.style.backgroundColor = '#FAFAFA';
+                  }}
+                  required
+                />
+              </div>
             </div>
 
-            <div className="field">
-              <label>Confirmar senha</label>
-              <input
-                className="input input--lg"
-                type="password"
-                value={data.password_confirmation}
-                onChange={(e) => setData("password_confirmation", e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-actions">
-              <button className="btn btn--primary btn--xl" disabled={processing}>
-                Cadastrar
+            {/* Botão de ação */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  padding: '16px 48px',
+                  backgroundColor: processing ? '#CCCCCC' : '#F9A825',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  cursor: processing ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 12px rgba(249, 168, 37, 0.3)'
+                }}
+                disabled={processing}
+                onMouseOver={(e) => {
+                  if (!processing) {
+                    e.target.style.backgroundColor = '#F57F17';
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 16px rgba(249, 168, 37, 0.4)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!processing) {
+                    e.target.style.backgroundColor = '#F9A825';
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(249, 168, 37, 0.3)';
+                  }
+                }}
+              >
+                {processing ? 'Cadastrando...' : 'Cadastrar Usuário'}
               </button>
             </div>
           </form>

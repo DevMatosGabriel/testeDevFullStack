@@ -1,3 +1,4 @@
+
 import './bootstrap'
 import '../css/app.css'
 import '../css/auth.css'
@@ -7,14 +8,14 @@ import { createRoot } from 'react-dom/client'
 import { createInertiaApp } from '@inertiajs/react'
 import axios from 'axios'
 
-// ✅ Configuração do CSRF Token para evitar erro 419
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 const token = document.head.querySelector('meta[name="csrf-token"]')
 if (token) {
-  axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
-  console.error('CSRF token not found')
+  console.error('CSRF token not found');
 }
 
 // 🔍 Importação dinâmica das páginas
