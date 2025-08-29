@@ -1,92 +1,124 @@
-###Antes de iniciar, vou deixar alguns pré-requisitos para o projeto:
+# 🚀 Teste SenacFullStack
 
---> PHP >= 8.1
+## 📋 Pré-requisitos
 
---> Composer
+- PHP >= 8.1  
+- Composer  
+- Node.js >= 16 + npm ou yarn  
+- SQLite  
+- Git (opcional, mas recomendado)
 
---> Node.js >= 16 + npm ou yarn
+---
 
---> SQLite
+## 📂 Clonar repositório
 
---> Git (opcional, mas recomendado)
-
-###Clonar repositório 
-
+```bash
 git clone https://github.com/DevMatosGabriel/testeDevFullStack.git
+cd testeDevFullStack
+```
 
-cd .\testeDevFullStack\
+---
 
+## ⚙️ Instalar dependências do PHP
 
-###Instalar dependências do PHP
-
+```bash
 composer install
+```
 
+---
 
-###Instalar dependências do Node
+## ⚛️ Instalar dependências do Node
 
+```bash
 npm install
 # ou
 yarn install
+```
 
-###Copie o arquivo .env.example para .env e configure as variáveis:
+---
 
+## 🔑 Configurar ambiente
+
+Copiar o arquivo `.env.example` para `.env`:
+
+```bash
 cp .env.example .env
+```
 
-###Gerar chave da aplicação 
+Gerar a chave da aplicação:
 
+```bash
 php artisan key:generate
+```
 
----------------------------------------------------------
-------           validações na .env                ------
----------------------------------------------------------
+---
 
-APP_KEY=base64:CfMRHChlnKZjOSVFdzC2tGWg/VVpYg3NwplhJ0XSfqw= (exemplo, validar se criou a key)
+## ✅ Validações no `.env`
 
+Adicione ou valide os seguintes parâmetros:
+
+```ini
+APP_KEY=base64:...             # validar se a key foi gerada
 APP_URL=http://localhost:8000
-APP_TIMEZONE=America/Sao_Paulo (caso não exista , adicionar)
-DB_FOREIGN_KEYS=true (caso não exista , adicionar)
+APP_TIMEZONE=America/Sao_Paulo
+
+DB_FOREIGN_KEYS=true
 
 # Sessões (driver e cookies)
-SESSION_DRIVER=file  (caso não exista , adicionar)
-SESSION_DOMAIN=localhost (caso não exista , adicionar)
-SESSION_SECURE_COOKIE=false (caso não exista , adicionar)
-SESSION_SAME_SITE=lax (caso não exista , adicionar)
+SESSION_DRIVER=file
+SESSION_DOMAIN=localhost
+SESSION_SECURE_COOKIE=false
+SESSION_SAME_SITE=lax
 
-CACHE_DRIVER=database (caso não exista , adicionar)
+CACHE_DRIVER=database
 
-VITE_APP_NAME=Laravel (caso não exista , adicionar)
+VITE_APP_NAME=Laravel
+```
 
+---
 
-------------------------------------------------------------
+## 🗄️ Rodar as migrações
 
-
-
-###Rodar as migrações
-
+```bash
 php artisan migrate
+```
 
-###Popula tabelas 
+---
 
+## 🌱 Popular tabelas
+
+```bash
 php artisan db:seed
+```
 
-###Cria usuário admin
+---
 
+## 👤 Criar usuários de teste
+
+Executar o seeder de usuários:
+
+```bash
 php artisan db:seed --class=AdminUserSeeder
+```
 
-usr: admin
-login: 00000000000
-senha: admin123
+### Usuários criados
 
-usr: Moderador
-login: 11111111111
-senha: moderador123
+- **Admin**  
+  - Login: `00000000000`  
+  - Senha: `admin123`
 
-usr: Leitor
-login: 22222222222
-senha: leitor123
+- **Moderador**  
+  - Login: `11111111111`  
+  - Senha: `moderador123`
 
+- **Leitor**  
+  - Login: `22222222222`  
+  - Senha: `leitor123`
 
-###Iniciar o projeto 
+---
 
+## ▶️ Iniciar o projeto
+
+```bash
 composer dev
-
+```
